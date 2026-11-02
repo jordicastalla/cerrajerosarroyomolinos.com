@@ -1,0 +1,470 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"settings": {
+		"color": {
+			"defaultDuotone": false,
+			"defaultGradients": false,
+			"defaultPalette": false,
+			"duotone": [
+				{
+					"name": "Petróleo y hielo",
+					"slug": "petroleo-hielo",
+					"colors": [ "#0B2545", "#EEF4F8" ]
+				},
+				{
+					"name": "Grafito y cobre",
+					"slug": "grafito-cobre",
+					"colors": [ "#2D3142", "#E8A58C" ]
+				}
+			],
+			"gradients": [],
+			"palette": [
+				{
+					"name": "Cobre oculto",
+					"slug": "primary",
+					"color": "#C86D51"
+				},
+				{
+					"name": "Cobre claro (texto sobre oscuro)",
+					"slug": "primary-accent",
+					"color": "#E8A58C"
+				},
+				{
+					"name": "Cobre profundo (texto sobre claro)",
+					"slug": "cobre-profundo",
+					"color": "#9E4A31"
+				},
+				{
+					"name": "Azul petróleo",
+					"slug": "primary-alt",
+					"color": "#0B2545"
+				},
+				{
+					"name": "Petróleo profundo",
+					"slug": "primary-alt-accent",
+					"color": "#071A33"
+				},
+				{
+					"name": "Petróleo medio",
+					"slug": "petroleo-medio",
+					"color": "#163A63"
+				},
+				{
+					"name": "Grafito",
+					"slug": "main",
+					"color": "#2D3142"
+				},
+				{
+					"name": "Tinta",
+					"slug": "main-accent",
+					"color": "#0A1424"
+				},
+				{
+					"name": "Acero (texto secundario)",
+					"slug": "secondary",
+					"color": "#566074"
+				},
+				{
+					"name": "Gris hielo",
+					"slug": "tertiary",
+					"color": "#EEF4F8"
+				},
+				{
+					"name": "Blanco",
+					"slug": "base",
+					"color": "#FFFFFF"
+				},
+				{
+					"name": "Línea clara",
+					"slug": "border-light",
+					"color": "#D3DEE7"
+				},
+				{
+					"name": "Línea oscura",
+					"slug": "border-dark",
+					"color": "#2A4466"
+				}
+			]
+		},
+		"custom": {
+			"fontWeight": {
+				"thin": 100,
+				"extra-light": 200,
+				"light": 300,
+				"regular": 400,
+				"medium": 500,
+				"semi-bold": 600,
+				"bold": 700,
+				"extra-bold": 800,
+				"black": 900
+			},
+			"lineHeight": {
+				"none": 1,
+				"tight": 1.04,
+				"snug": 1.15,
+				"body": 1.6,
+				"relaxed": 1.7,
+				"loose": 2
+			}
+		},
+		"layout": {
+			"contentSize": "720px",
+			"wideSize": "1240px"
+		},
+		"typography": {
+			"dropCap": false,
+			"defaultFontSizes": false,
+			"fluid": true,
+			"fontFamilies": [
+				{
+					"name": "Texto (Rethink Sans)",
+					"slug": "primary",
+					"fontFamily": "\"Rethink Sans\", system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+					"fontFace": [
+						{
+							"fontFamily": "Rethink Sans",
+							"fontStyle": "normal",
+							"fontWeight": "400 800",
+							"fontDisplay": "swap",
+							"src": [ "file:./assets/fonts/rethink-sans/RethinkSans-Variable.woff2" ]
+						},
+						{
+							"fontFamily": "Rethink Sans",
+							"fontStyle": "italic",
+							"fontWeight": "400 800",
+							"fontDisplay": "swap",
+							"src": [ "file:./assets/fonts/rethink-sans/RethinkSans-Variable-Italic.woff2" ]
+						}
+					]
+				},
+				{
+					"name": "Rótulo (Cabinet Grotesk)",
+					"slug": "heading",
+					"fontFamily": "\"Cabinet Grotesk\", \"Cerrojo Display\", \"Arial Black\", \"Helvetica Neue\", Arial, sans-serif",
+					"fontFace": [
+						{
+							"fontFamily": "Cabinet Grotesk",
+							"fontStyle": "normal",
+							"fontWeight": "800",
+							"fontDisplay": "swap",
+							"src": [ "file:./assets/fonts/cabinet-grotesk/CabinetGrotesk-Extrabold.woff2" ]
+						}
+					]
+				},
+				{
+					"name": "Rótulo de reserva (Cerrojo Display)",
+					"slug": "heading-reserva",
+					"fontFamily": "\"Cerrojo Display\", \"Arial Black\", \"Helvetica Neue\", Arial, sans-serif",
+					"fontFace": [
+						{
+							"fontFamily": "Cerrojo Display",
+							"fontStyle": "normal",
+							"fontWeight": "700 900",
+							"fontDisplay": "swap",
+							"src": [ "file:./assets/fonts/cerrojo-display/CerrojoDisplay-ExtraBold.woff2" ]
+						}
+					]
+				},
+				{
+					"name": "Técnica (monoespaciada)",
+					"slug": "monospace",
+					"fontFamily": "ui-monospace, \"SF Mono\", \"Cascadia Mono\", \"Roboto Mono\", Menlo, Consolas, monospace"
+				}
+			],
+			"fontSizes": [
+				{
+					"name": "Extra pequeño",
+					"slug": "x-small",
+					"size": "0.875rem",
+					"fluid": { "min": "0.8125rem", "max": "0.875rem" }
+				},
+				{
+					"name": "Pequeño",
+					"slug": "small",
+					"size": "1rem",
+					"fluid": { "min": "0.9375rem", "max": "1rem" }
+				},
+				{
+					"name": "Base",
+					"slug": "base",
+					"size": "1.125rem",
+					"fluid": { "min": "1.0625rem", "max": "1.125rem" }
+				},
+				{
+					"name": "Mediano",
+					"slug": "medium",
+					"size": "1.5rem",
+					"fluid": { "min": "1.25rem", "max": "1.5rem" }
+				},
+				{
+					"name": "Grande",
+					"slug": "large",
+					"size": "2.25rem",
+					"fluid": { "min": "1.625rem", "max": "2.25rem" }
+				},
+				{
+					"name": "Extra grande",
+					"slug": "x-large",
+					"size": "3rem",
+					"fluid": { "min": "2rem", "max": "3rem" }
+				},
+				{
+					"name": "Enorme",
+					"slug": "xx-large",
+					"size": "4.25rem",
+					"fluid": { "min": "2.375rem", "max": "4.25rem" }
+				},
+				{
+					"name": "Rótulo gigante",
+					"slug": "xxx-large",
+					"size": "6.5rem",
+					"fluid": { "min": "2.75rem", "max": "6.5rem" }
+				}
+			]
+		}
+	},
+	"styles": {
+		"color": {
+			"background": "var:preset|color|base",
+			"text": "var:preset|color|main"
+		},
+		"spacing": {
+			"blockGap": "var:preset|spacing|medium",
+			"padding": {
+				"top": "0",
+				"right": "clamp(1.125rem, 4.5vw, 2.5rem)",
+				"bottom": "0",
+				"left": "clamp(1.125rem, 4.5vw, 2.5rem)"
+			}
+		},
+		"typography": {
+			"fontFamily": "var:preset|font-family|primary",
+			"fontSize": "var:preset|font-size|base",
+			"fontWeight": "400",
+			"lineHeight": "1.6"
+		},
+		"elements": {
+			"heading": {
+				"typography": {
+					"fontFamily": "var:preset|font-family|heading",
+					"fontWeight": "800",
+					"lineHeight": "1.08",
+					"letterSpacing": "-0.012em"
+				}
+			},
+			"h1": {
+				"typography": {
+					"fontSize": "var:preset|font-size|xx-large",
+					"lineHeight": "1"
+				}
+			},
+			"h2": {
+				"typography": {
+					"fontSize": "var:preset|font-size|x-large",
+					"lineHeight": "1.04"
+				}
+			},
+			"h3": {
+				"typography": {
+					"fontSize": "var:preset|font-size|medium",
+					"lineHeight": "1.15"
+				}
+			},
+			"h4": {
+				"typography": {
+					"fontSize": "var:preset|font-size|base",
+					"lineHeight": "1.25"
+				}
+			},
+			"h5": {
+				"typography": {
+					"fontSize": "var:preset|font-size|small"
+				}
+			},
+			"h6": {
+				"typography": {
+					"fontSize": "var:preset|font-size|x-small"
+				}
+			},
+			"link": {
+				"color": {
+					"text": "currentColor"
+				},
+				":hover": {
+					"color": {
+						"text": "var:preset|color|cobre-profundo"
+					}
+				}
+			},
+			"button": {
+				"border": {
+					"radius": "2px",
+					"width": "0"
+				},
+				"color": {
+					"background": "var:preset|color|primary",
+					"text": "var:preset|color|main-accent"
+				},
+				"spacing": {
+					"padding": {
+						"top": "0.85em",
+						"right": "1.35em",
+						"bottom": "0.85em",
+						"left": "1.35em"
+					}
+				},
+				"typography": {
+					"fontFamily": "var:preset|font-family|primary",
+					"fontSize": "var:preset|font-size|small",
+					"fontWeight": "700",
+					"letterSpacing": "0.01em",
+					"lineHeight": "1.2"
+				},
+				":hover": {
+					"color": {
+						"background": "var:preset|color|primary-accent",
+						"text": "var:preset|color|main-accent"
+					}
+				},
+				":focus": {
+					"color": {
+						"background": "var:preset|color|primary-accent",
+						"text": "var:preset|color|main-accent"
+					}
+				}
+			},
+			"caption": {
+				"typography": {
+					"fontFamily": "var:preset|font-family|monospace",
+					"fontSize": "var:preset|font-size|x-small"
+				},
+				"color": {
+					"text": "var:preset|color|secondary"
+				}
+			}
+		},
+		"blocks": {
+			"core/navigation": {
+				"typography": {
+					"fontSize": "var:preset|font-size|small",
+					"fontWeight": "600"
+				},
+				"elements": {
+					"link": {
+						":hover": {
+							"typography": {
+								"textDecoration": "none"
+							}
+						}
+					}
+				}
+			},
+			"core/post-title": {
+				"typography": {
+					"fontFamily": "var:preset|font-family|heading",
+					"fontWeight": "800"
+				},
+				"elements": {
+					"link": {
+						"typography": {
+							"textDecoration": "none"
+						}
+					}
+				}
+			},
+			"core/quote": {
+				"border": {
+					"color": "var:preset|color|primary",
+					"style": "solid",
+					"width": "0 0 0 4px !important",
+					"radius": "0"
+				},
+				"typography": {
+					"fontFamily": "var:preset|font-family|heading",
+					"fontSize": "var:preset|font-size|medium",
+					"fontWeight": "800",
+					"lineHeight": "1.25"
+				}
+			},
+			"core/pullquote": {
+				"border": {
+					"color": "var:preset|color|primary",
+					"style": "solid",
+					"width": "4px 0 0 0",
+					"radius": "0"
+				},
+				"typography": {
+					"fontFamily": "var:preset|font-family|heading",
+					"fontSize": "var:preset|font-size|large",
+					"fontWeight": "800",
+					"lineHeight": "1.12"
+				}
+			},
+			"core/separator": {
+				"color": {
+					"text": "var:preset|color|border-light"
+				}
+			},
+			"core/site-title": {
+				"typography": {
+					"fontFamily": "var:preset|font-family|heading",
+					"fontWeight": "800"
+				}
+			},
+			"core/post-date": {
+				"typography": {
+					"fontFamily": "var:preset|font-family|monospace",
+					"fontSize": "var:preset|font-size|x-small",
+					"letterSpacing": "0.04em",
+					"textTransform": "uppercase"
+				}
+			},
+			"core/query-pagination": {
+				"typography": {
+					"fontWeight": "700"
+				}
+			},
+			"core/details": {
+				"css": "& summary { font-weight: 700 }"
+			}
+		}
+	},
+	"customTemplates": [
+		{
+			"name": "page-no-title",
+			"title": "Page (Full Width, No Title)",
+			"postTypes": [ "page", "ollie_pattern", "post" ]
+		},
+		{
+			"name": "page-with-sidebar",
+			"title": "Page (With Sidebar)",
+			"postTypes": [ "post", "page" ]
+		},
+		{
+			"name": "page-cambio-de-cerradura-y-bombin",
+			"title": "Servicio: Cambio de cerradura y bombín",
+			"postTypes": [ "page" ]
+		},
+		{
+			"name": "page-instalacion-de-cerrojos-de-seguridad",
+			"title": "Servicio: Instalación de cerrojos de seguridad",
+			"postTypes": [ "page" ]
+		},
+		{
+			"name": "page-reparacion-de-cierres-metalicos",
+			"title": "Servicio: Reparación de cierres metálicos",
+			"postTypes": [ "page" ]
+		},
+		{
+			"name": "page-contacto",
+			"title": "Contacto",
+			"postTypes": [ "page" ]
+		},
+		{
+			"name": "page-quienes-somos",
+			"title": "Quiénes somos",
+			"postTypes": [ "page" ]
+		}
+	]
+}

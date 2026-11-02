@@ -1,0 +1,2673 @@
+/*
+Theme Name: Cerrajeros Arroyomolinos
+Theme URI: https://cerrajerosarroyomolinos.com
+Description: Tema hijo de Ollie para Cerrajeros Arroyomolinos (C. de Cartagena, 8-66, 28939 Arroyomolinos, Madrid). Edición completa del sitio con bloques nativos, patrones reutilizables, plantillas por servicio, datos estructurados y un objetivo: que el visitante llame al +34 919 931 713.
+Author: Cerrajeros Arroyomolinos
+Template: ollie
+Version: 1.0.0
+Requires at least: 6.6
+Requires PHP: 7.4
+License: GNU General Public License v3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
+Text Domain: cerrajeros-arroyomolinos
+Tags: full-site-editing, block-patterns, block-styles, custom-logo, editor-style
+*/
+
+/* ==========================================================================
+   Índice
+   1.  Tokens
+   2.  Base
+   3.  Estilos de bloque (is-style-ca-*)
+   4.  Estructura de secciones y transiciones
+   5.  Cabecera
+   6.  Portada (hero)
+   7.  Introducciones y migas de pan
+   8.  Secciones (patrones)
+   9.  Pie y barra de llamada
+   10. Blog y entradas
+   11. Movimiento (con prefers-reduced-motion)
+   12. Impresión
+   ========================================================================== */
+
+
+/* 1. Tokens
+   ========================================================================== */
+
+:root {
+	/* Alias legibles de la paleta de theme.json (siguen los cambios de Estilos globales). */
+	--ca-petroleo: var(--wp--preset--color--primary-alt);
+	--ca-petroleo-profundo: var(--wp--preset--color--primary-alt-accent);
+	--ca-petroleo-medio: var(--wp--preset--color--petroleo-medio);
+	--ca-cobre: var(--wp--preset--color--primary);
+	--ca-cobre-claro: var(--wp--preset--color--primary-accent);
+	--ca-cobre-profundo: var(--wp--preset--color--cobre-profundo);
+	--ca-grafito: var(--wp--preset--color--main);
+	--ca-tinta: var(--wp--preset--color--main-accent);
+	--ca-acero: var(--wp--preset--color--secondary);
+	--ca-hielo: var(--wp--preset--color--tertiary);
+	--ca-blanco: var(--wp--preset--color--base);
+	--ca-linea: var(--wp--preset--color--border-light);
+
+	--ca-rotulo: var(--wp--preset--font-family--heading);
+	--ca-mono: var(--wp--preset--font-family--monospace);
+
+	/* Valores que cambian según el fondo (claro por defecto). */
+	--ca-acento: var(--ca-cobre-profundo);
+	--ca-regla: var(--ca-linea);
+	--ca-foco: var(--ca-cobre-profundo);
+	--ca-texto-suave: var(--ca-acero);
+
+	--ca-seccion-pad: clamp(3.5rem, 8vw, 7rem);
+	--ca-cut: clamp(14px, 2.3vw, 30px);
+	--ca-ease: cubic-bezier(.2, .7, .2, 1);
+
+	/* Icono de teléfono (dibujado para este tema) usado como máscara. */
+	--ca-icono-telefono: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7.2 2.6 9.9 6c.5.6.4 1.4-.1 1.9L8.2 9.5c1.3 2.8 3.5 5 6.3 6.3l1.6-1.6c.5-.5 1.3-.6 1.9-.1l3.4 2.7c.6.5.7 1.4.2 2l-1.5 1.9c-.7.9-1.9 1.3-3 1C9.9 19.9 4.1 14.1 2.3 6.9c-.3-1.1.1-2.3 1-3l1.9-1.5c.6-.5 1.5-.4 2 .2Z'/%3E%3C/svg%3E");
+
+	/* Tornillo para placas metálicas. */
+	--ca-tornillo-cobre: radial-gradient(circle, #4a2216 0 1.7px, #f2c6b4 2px 2.7px, rgb(0 0 0 / .28) 3px, transparent 3.6px);
+	--ca-tornillo-acero: radial-gradient(circle, #3b4452 0 2px, #f6f8fa 2.4px 3.1px, rgb(0 0 0 / .3) 3.5px, transparent 4.1px);
+}
+
+/* Fondos oscuros: los acentos pasan a sus variantes claras para mantener el contraste. */
+:is(
+	.has-primary-alt-background-color,
+	.has-primary-alt-accent-background-color,
+	.has-petroleo-medio-background-color,
+	.has-main-background-color,
+	.has-main-accent-background-color
+) {
+	--ca-acento: var(--ca-cobre-claro);
+	--ca-regla: rgb(238 244 248 / .16);
+	--ca-foco: var(--ca-cobre-claro);
+	--ca-texto-suave: rgb(238 244 248 / .74);
+}
+
+/* Fondo cobre: todo en tinta. */
+.has-primary-background-color {
+	--ca-acento: var(--ca-tinta);
+	--ca-regla: rgb(10 20 36 / .22);
+	--ca-foco: var(--ca-tinta);
+	--ca-texto-suave: var(--ca-tinta);
+}
+
+
+/* 2. Base
+   ========================================================================== */
+
+html {
+	scroll-padding-top: 1rem;
+}
+
+body {
+	text-rendering: optimizeLegibility;
+	font-variant-numeric: lining-nums;
+}
+
+::selection {
+	background: var(--ca-cobre);
+	color: var(--ca-tinta);
+}
+
+h1, h2, h3, h4,
+.wp-block-heading {
+	text-wrap: balance;
+}
+
+p,
+li {
+	text-wrap: pretty;
+}
+
+/* Un teléfono nunca se parte en dos líneas. */
+a[href^="tel:"] {
+	white-space: nowrap;
+}
+
+/* Las secciones van pegadas: el ritmo lo marcan sus propios rellenos. */
+.wp-site-blocks > * + * {
+	margin-block-start: 0;
+}
+
+.ca-main > * {
+	margin-block: 0;
+}
+
+/* Enlaces: subrayado de cobre, más grueso al pasar. */
+:where(.wp-site-blocks, .editor-styles-wrapper) a:where(:not(.wp-element-button)) {
+	text-decoration-line: underline;
+	text-decoration-thickness: 1.5px;
+	text-decoration-color: var(--ca-cobre);
+	text-underline-offset: .22em;
+	transition: color .2s, text-decoration-thickness .2s;
+}
+
+:where(.wp-site-blocks, .editor-styles-wrapper) a:where(:not(.wp-element-button)):hover {
+	text-decoration-thickness: 3px;
+}
+
+:is(
+	.has-primary-alt-background-color,
+	.has-primary-alt-accent-background-color,
+	.has-petroleo-medio-background-color,
+	.has-main-background-color,
+	.has-main-accent-background-color
+) a:where(:not(.wp-element-button)):hover {
+	color: var(--ca-cobre-claro);
+}
+
+.has-primary-background-color a:where(:not(.wp-element-button)) {
+	text-decoration-color: currentColor;
+}
+
+.has-primary-background-color a:where(:not(.wp-element-button)):hover {
+	color: var(--ca-tinta);
+}
+
+/* Foco visible y con contraste en cualquier fondo. */
+:where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
+	outline: 3px solid var(--ca-foco);
+	outline-offset: 3px;
+	border-radius: 1px;
+}
+
+.wp-element-button:focus-visible {
+	outline: 3px solid var(--ca-foco);
+	outline-offset: 3px;
+}
+
+/* Contenido de página vacío: no deja huecos en las plantillas. */
+.ca-contenido:empty {
+	display: none;
+}
+
+.ca-main > .ca-contenido {
+	padding-block: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.ca-contenido > :where(p, ul, ol) {
+	font-size: clamp(1.0625rem, .35vw + 1rem, 1.1875rem);
+	line-height: 1.7;
+}
+
+.ca-contenido > h2 {
+	margin-block-start: 2.2em;
+	font-size: clamp(1.6rem, 3vw, 2.25rem);
+}
+
+.ca-contenido > h3 {
+	margin-block-start: 1.8em;
+}
+
+
+/* 3. Estilos de bloque
+   ========================================================================== */
+
+/* Etiqueta técnica: monoespaciada, mayúsculas, con trazo de cobre. */
+.is-style-ca-etiqueta {
+	display: flex;
+	align-items: center;
+	gap: .75em;
+	margin-block: 0;
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	font-weight: 600;
+	letter-spacing: .14em;
+	line-height: 1.3;
+	text-transform: uppercase;
+	color: var(--ca-acento);
+}
+
+.is-style-ca-etiqueta::before {
+	content: "";
+	flex: none;
+	inline-size: 1.75em;
+	block-size: 2px;
+	background: currentColor;
+}
+
+.is-style-ca-etiqueta.has-text-align-center {
+	justify-content: center;
+}
+
+/* Botón con icono de teléfono. */
+.wp-block-button.is-style-ca-llamada .wp-block-button__link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: .6em;
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: .02em;
+	white-space: nowrap;
+	transition: background-color .2s, color .2s, transform .2s var(--ca-ease);
+}
+
+.wp-block-button.is-style-ca-llamada .wp-block-button__link::before,
+.wp-block-button.is-style-ca-placa .wp-block-button__link::before {
+	content: "";
+	flex: none;
+	inline-size: 1.05em;
+	block-size: 1.05em;
+	background: currentColor;
+	-webkit-mask: var(--ca-icono-telefono) center / contain no-repeat;
+	mask: var(--ca-icono-telefono) center / contain no-repeat;
+}
+
+.wp-block-button.is-style-ca-llamada .wp-block-button__link:hover {
+	transform: translateY(-1px);
+}
+
+/* Placa de cobre cepillado con cuatro tornillos: el teléfono protagonista. */
+.wp-block-button.is-style-ca-placa .wp-block-button__link {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: .5em;
+	overflow: hidden;
+	padding: .62em 1.1em .62em .95em;
+	border-radius: 3px;
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.25rem, 6.8vw, 2.4rem);
+	font-size: clamp(1.15rem, 7.4cqi, 2.4rem);
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: .01em;
+	line-height: 1;
+	white-space: nowrap;
+	color: var(--ca-tinta);
+	text-shadow: 0 1px 0 rgb(255 255 255 / .28);
+	background-color: var(--ca-cobre);
+	background-image:
+		var(--ca-tornillo-cobre), var(--ca-tornillo-cobre), var(--ca-tornillo-cobre), var(--ca-tornillo-cobre),
+		repeating-linear-gradient(90deg, rgb(255 255 255 / .07) 0 1px, transparent 1px 3px),
+		linear-gradient(100deg, #b45a40 0%, #de977c 34%, #c86d51 54%, #ad553c 100%);
+	background-position: 7px 7px, calc(100% - 7px) 7px, 7px calc(100% - 7px), calc(100% - 7px) calc(100% - 7px), 0 0, 0 0;
+	background-size: 8px 8px, 8px 8px, 8px 8px, 8px 8px, auto, auto;
+	background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, no-repeat;
+	box-shadow:
+		inset 0 1px 0 rgb(255 255 255 / .45),
+		inset 0 -2px 0 rgb(0 0 0 / .22),
+		0 16px 32px -16px rgb(0 0 0 / .75);
+	transition: transform .25s var(--ca-ease), box-shadow .25s;
+}
+
+.wp-block-button.is-style-ca-placa .wp-block-button__link::before {
+	inline-size: .78em;
+	block-size: .78em;
+}
+
+/* Brillo metálico al pasar el ratón. */
+.wp-block-button.is-style-ca-placa .wp-block-button__link::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(105deg, transparent 38%, rgb(255 255 255 / .42) 50%, transparent 62%);
+	transform: translateX(-120%);
+	pointer-events: none;
+}
+
+.wp-block-button.is-style-ca-placa .wp-block-button__link:hover,
+.wp-block-button.is-style-ca-placa .wp-block-button__link:focus-visible {
+	color: var(--ca-tinta);
+	background-color: var(--ca-cobre);
+	transform: translateY(-2px);
+	box-shadow:
+		inset 0 1px 0 rgb(255 255 255 / .45),
+		inset 0 -2px 0 rgb(0 0 0 / .22),
+		0 22px 40px -18px rgb(0 0 0 / .8);
+}
+
+/* Contorno. */
+.wp-block-button.is-style-ca-contorno .wp-block-button__link {
+	color: inherit;
+	background: transparent;
+	box-shadow: inset 0 0 0 2px currentColor;
+	transition: box-shadow .2s, background-color .2s;
+}
+
+.wp-block-button.is-style-ca-contorno .wp-block-button__link:hover,
+.wp-block-button.is-style-ca-contorno .wp-block-button__link:focus-visible {
+	color: inherit;
+	background: rgb(200 109 81 / .14);
+	box-shadow: inset 0 0 0 2px var(--ca-cobre);
+}
+
+.wp-block-button.is-style-ca-contorno .wp-block-button__link::after {
+	content: "↗";
+	content: "↗" / "";
+	margin-inline-start: .5em;
+}
+
+/* Lista numerada técnica: 01, 02, 03… */
+.is-style-ca-numerada {
+	counter-reset: ca-num;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border-block-start: 1px solid var(--ca-regla);
+}
+
+.is-style-ca-numerada > li {
+	counter-increment: ca-num;
+	position: relative;
+	margin: 0;
+	padding: 1.2rem .75rem 1.3rem 3.4rem;
+	border-block-end: 1px solid var(--ca-regla);
+	background: linear-gradient(90deg, rgb(200 109 81 / .1), transparent 70%) no-repeat 0 0 / 0 100%;
+	transition: background-size .45s var(--ca-ease);
+}
+
+.is-style-ca-numerada > li::before {
+	content: counter(ca-num, decimal-leading-zero);
+	content: counter(ca-num, decimal-leading-zero) / "";
+	position: absolute;
+	inset-inline-start: 0;
+	inset-block-start: 1.55rem;
+	font-family: var(--ca-mono);
+	font-size: .8rem;
+	font-weight: 600;
+	letter-spacing: .06em;
+	color: var(--ca-acento);
+}
+
+.is-style-ca-numerada > li::after {
+	content: "";
+	position: absolute;
+	inset-block: -1px;
+	inset-inline-start: 0;
+	inline-size: 3px;
+	background: var(--ca-cobre);
+	transform: scaleY(0);
+	transform-origin: top;
+	transition: transform .35s var(--ca-ease);
+}
+
+.is-style-ca-numerada > li:hover {
+	background-size: 100% 100%;
+}
+
+.is-style-ca-numerada > li:hover::after {
+	transform: scaleY(1);
+}
+
+.is-style-ca-numerada > li > strong:first-child {
+	display: block;
+	margin-block-end: .3rem;
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.18rem, .9rem + 1vw, 1.5rem);
+	font-weight: 800;
+	line-height: 1.15;
+	letter-spacing: -.01em;
+}
+
+/* Cinta rotulada (estilo etiquetadora de taller). */
+.wp-block-heading.is-style-ca-cinta {
+	display: inline-block;
+	justify-self: start;
+	margin: 0;
+	padding: .62em 1.1em .56em;
+	font-family: var(--ca-rotulo);
+	font-size: clamp(.95rem, .85rem + .4vw, 1.12rem);
+	letter-spacing: .16em;
+	line-height: 1;
+	text-transform: uppercase;
+	color: var(--ca-hielo);
+	background: var(--ca-petroleo);
+	text-shadow: 0 1px 0 rgb(0 0 0 / .55), 0 -1px 0 rgb(255 255 255 / .16);
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / .1), inset 0 -1px 0 rgb(0 0 0 / .35);
+	clip-path: polygon(0 0, 100% 0, 98.6% 50%, 100% 100%, 0 100%, 1.4% 50%);
+	rotate: -1.2deg;
+}
+
+/* Marco de plano técnico para imágenes: cuadrícula, cruces de registro y pie monoespaciado. */
+.wp-block-image.is-style-ca-marco {
+	position: relative;
+	margin: 0;
+}
+
+.wp-block-image.is-style-ca-marco img {
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+	padding: clamp(.6rem, 2vw, 1.4rem);
+	border: 1px solid var(--ca-linea);
+	border-radius: 0;
+	background-color: var(--ca-blanco);
+	background-image:
+		linear-gradient(rgb(11 37 69 / .06) 1px, transparent 1px),
+		linear-gradient(90deg, rgb(11 37 69 / .06) 1px, transparent 1px);
+	background-size: 24px 24px;
+	background-position: -1px -1px;
+}
+
+.wp-block-image.is-style-ca-marco::before,
+.wp-block-image.is-style-ca-marco::after {
+	content: "";
+	position: absolute;
+	z-index: 1;
+	inline-size: 26px;
+	block-size: 26px;
+	border: 0 solid var(--ca-cobre);
+	pointer-events: none;
+}
+
+.wp-block-image.is-style-ca-marco::before {
+	inset-block-start: -7px;
+	inset-inline-start: -7px;
+	border-block-start-width: 2px;
+	border-inline-start-width: 2px;
+}
+
+.wp-block-image.is-style-ca-marco::after {
+	inset-block-end: calc(var(--ca-pie-alto, 0px) - 7px);
+	inset-inline-end: -7px;
+	border-block-end-width: 2px;
+	border-inline-end-width: 2px;
+}
+
+.wp-block-image.is-style-ca-marco:has(figcaption) {
+	--ca-pie-alto: 2.4rem;
+}
+
+.wp-block-image.is-style-ca-marco figcaption {
+	margin: .85rem 0 0;
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	letter-spacing: .06em;
+	text-align: start;
+	text-transform: uppercase;
+	color: var(--ca-texto-suave);
+}
+
+/* Separadores. */
+.wp-block-separator.is-style-ca-regla {
+	block-size: 14px;
+	border: 0;
+	opacity: 1;
+	background:
+		repeating-linear-gradient(90deg, var(--ca-cobre) 0 1px, transparent 1px 48px) left bottom / 100% 14px no-repeat,
+		repeating-linear-gradient(90deg, currentColor 0 1px, transparent 1px 8px) left bottom / 100% 7px no-repeat;
+}
+
+.wp-block-separator.is-style-ca-remaches {
+	block-size: 10px;
+	border: 0;
+	opacity: 1;
+	background: radial-gradient(circle, var(--ca-cobre) 0 2.5px, rgb(0 0 0 / .15) 3px, transparent 3.6px) left center / 22px 10px repeat-x;
+}
+
+/* Grupos: plano técnico (cuadrícula) y placa de acero. */
+.is-style-ca-plano {
+	background-image:
+		linear-gradient(rgb(11 37 69 / .07) 1px, transparent 1px),
+		linear-gradient(90deg, rgb(11 37 69 / .07) 1px, transparent 1px),
+		linear-gradient(rgb(11 37 69 / .035) 1px, transparent 1px),
+		linear-gradient(90deg, rgb(11 37 69 / .035) 1px, transparent 1px);
+	background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+	background-position: -1px -1px;
+}
+
+:is(.has-primary-alt-background-color, .has-primary-alt-accent-background-color).is-style-ca-plano {
+	background-image:
+		linear-gradient(rgb(238 244 248 / .07) 1px, transparent 1px),
+		linear-gradient(90deg, rgb(238 244 248 / .07) 1px, transparent 1px),
+		linear-gradient(rgb(238 244 248 / .03) 1px, transparent 1px),
+		linear-gradient(90deg, rgb(238 244 248 / .03) 1px, transparent 1px);
+}
+
+.wp-block-group.is-style-ca-placa-acero {
+	--ca-acento: var(--ca-cobre-profundo);
+	--ca-regla: rgb(10 20 36 / .18);
+	--ca-foco: var(--ca-petroleo);
+	position: relative;
+	padding: clamp(1.75rem, 4vw, 2.75rem);
+	border-radius: 4px;
+	color: var(--ca-tinta);
+	text-shadow: 0 1px 0 rgb(255 255 255 / .65);
+	background-color: #dfe6ec;
+	background-image:
+		var(--ca-tornillo-acero), var(--ca-tornillo-acero), var(--ca-tornillo-acero), var(--ca-tornillo-acero),
+		repeating-linear-gradient(90deg, rgb(255 255 255 / .38) 0 1px, transparent 1px 2px, rgb(0 0 0 / .025) 2px 3px),
+		linear-gradient(160deg, #f4f7fa 0%, #cfd8e1 45%, #eaeff4 62%, #c3ccd6 100%);
+	background-position: 12px 12px, calc(100% - 12px) 12px, 12px calc(100% - 12px), calc(100% - 12px) calc(100% - 12px), 0 0, 0 0;
+	background-size: 10px 10px, 10px 10px, 10px 10px, 10px 10px, auto, auto;
+	background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, no-repeat;
+	box-shadow:
+		inset 0 1px 0 #fff,
+		inset 0 -1px 0 rgb(0 0 0 / .16),
+		0 34px 60px -30px rgb(0 0 0 / .7);
+}
+
+.wp-block-group.is-style-ca-placa-acero a:where(:not(.wp-element-button)):hover {
+	color: var(--ca-cobre-profundo);
+}
+
+
+/* 4. Estructura de secciones y transiciones
+   ========================================================================== */
+
+.ca-seccion {
+	position: relative;
+	padding-block: var(--ca-seccion-pad);
+}
+
+.wp-block-group.ca-seccion__interior > *,
+.wp-block-group.ca-cabecera > * {
+	margin-block: 0;
+}
+
+.wp-block-group.ca-cabecera {
+	display: grid;
+	gap: 1rem;
+	max-inline-size: 46rem;
+}
+
+.ca-titulo-seccion {
+	font-size: var(--wp--preset--font-size--x-large);
+	letter-spacing: -.02em;
+}
+
+.ca-entradilla {
+	font-size: clamp(1.0625rem, .95rem + .45vw, 1.25rem);
+	line-height: 1.55;
+}
+
+/* Dos columnas asimétricas (se ajusta en cada sección). */
+.wp-block-group.ca-dos-columnas {
+	display: grid;
+	gap: clamp(2rem, 5vw, 5rem);
+}
+
+/* En una sola columna, el contenido nunca ensancha la pista (evita desbordes en 320 px). */
+.wp-block-group:is(.ca-dos-columnas, .ca-hero__grid, .ca-intro__grid, .ca-hero__main, .ca-intro__main, .ca-intro__aparte, .ca-footer__grid, .ca-cta-placa) {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.wp-block-heading,
+.wp-block-post-title,
+.wp-block-query-title {
+	overflow-wrap: break-word;
+}
+
+@media (min-width: 900px) {
+	.wp-block-group.ca-dos-columnas {
+		grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+		align-items: start;
+	}
+}
+
+/*
+ * Corte de llave: el borde superior de la sección dibuja el perfil dentado de
+ * una llave (dientes en V de distinta profundidad y punta inclinada). La
+ * sección sube lo que mide el corte para morder la sección anterior.
+ */
+.is-style-ca-corte,
+.is-style-ca-corte-derecha {
+	z-index: 1;
+	margin-block-start: calc(var(--ca-cut) * -1) !important;
+	clip-path: polygon(
+		0 0,
+		4% 0, 5.5% calc(var(--ca-cut) * .55), 7% 0,
+		11% 0, 12.75% calc(var(--ca-cut) * .85), 14.5% 0,
+		18% 0, 19.5% calc(var(--ca-cut) * .35), 21% 0,
+		25% 0, 26.75% calc(var(--ca-cut) * .7), 28.5% 0,
+		32% 0, 34.5% var(--ca-cut),
+		100% var(--ca-cut), 100% 100%, 0 100%
+	);
+}
+
+.is-style-ca-corte-derecha {
+	clip-path: polygon(
+		0 var(--ca-cut),
+		65.5% var(--ca-cut), 68% 0,
+		71.5% 0, 73.25% calc(var(--ca-cut) * .7), 75% 0,
+		79% 0, 80.5% calc(var(--ca-cut) * .35), 82% 0,
+		85.5% 0, 87.25% calc(var(--ca-cut) * .85), 89% 0,
+		93% 0, 94.5% calc(var(--ca-cut) * .55), 96% 0,
+		100% 0, 100% 100%, 0 100%
+	);
+}
+
+.ca-seccion.is-style-ca-corte,
+.ca-seccion.is-style-ca-corte-derecha {
+	padding-block-start: calc(var(--ca-seccion-pad) + var(--ca-cut));
+}
+
+/* Regla de medida (marcas cada 8 px y cada 48 px) para bordes de sección. */
+.ca-franja::before,
+.ca-footer::before,
+.ca-hero::after,
+.ca-intro--servicio::after {
+	content: "";
+	position: absolute;
+	inset-inline: 0;
+	block-size: 14px;
+	pointer-events: none;
+	background:
+		repeating-linear-gradient(90deg, rgb(200 109 81 / .7) 0 1px, transparent 1px 48px) left bottom / 100% 14px no-repeat,
+		repeating-linear-gradient(90deg, rgb(238 244 248 / .2) 0 1px, transparent 1px 8px) left bottom / 100% 7px no-repeat;
+}
+
+
+/* 5. Cabecera
+   ========================================================================== */
+
+.ca-header {
+	position: relative;
+	z-index: 30;
+	padding-block: .65rem;
+	border-block-end: 1px solid rgb(238 244 248 / .08);
+}
+
+.wp-block-group.ca-header__barra {
+	gap: 1rem;
+}
+
+.ca-header .wp-block-site-logo,
+.ca-footer .wp-block-site-logo {
+	line-height: 0;
+}
+
+.ca-header .wp-block-site-logo img,
+.ca-header .custom-logo {
+	inline-size: clamp(148px, 13vw + 90px, 232px);
+	block-size: auto;
+}
+
+.wp-block-group.ca-header__acciones {
+	gap: clamp(.5rem, 2vw, 1.75rem);
+}
+
+.wp-block-button.ca-header__llamar .wp-block-button__link {
+	padding: .72em 1.05em;
+	font-size: var(--wp--preset--font-size--small);
+}
+
+/* Móvil: el botón de llamada queda como un icono grande junto al menú. */
+@media (max-width: 599px) {
+	.wp-block-button.ca-header__llamar .wp-block-button__link {
+		inline-size: 46px;
+		block-size: 46px;
+		padding: 0;
+		font-size: 0;
+		gap: 0;
+	}
+
+	.wp-block-button.ca-header__llamar .wp-block-button__link::before {
+		inline-size: 20px;
+		block-size: 20px;
+	}
+}
+
+/* Navegación sobre fondo oscuro. */
+.ca-nav .wp-block-navigation-item__content {
+	padding-block: .35em;
+}
+
+.ca-nav .wp-block-navigation-item > .wp-block-navigation-item__content:hover,
+.ca-nav .wp-block-navigation-submenu__toggle:hover {
+	color: var(--ca-cobre-claro);
+}
+
+.ca-nav .wp-block-navigation__submenu-container {
+	min-inline-size: 18rem !important;
+	padding: .5rem 0 !important;
+	border: 0 !important;
+	border-block-start: 2px solid var(--ca-cobre) !important;
+	color: var(--ca-blanco) !important;
+	background: var(--ca-petroleo-profundo) !important;
+	box-shadow: 0 24px 40px -20px rgb(0 0 0 / .6);
+}
+
+.ca-nav .wp-block-navigation__submenu-container .wp-block-navigation-item__content {
+	padding: .6rem 1.1rem !important;
+}
+
+.ca-nav .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__responsive-container-content {
+	padding-block-start: 1.5rem;
+}
+
+.ca-nav .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content {
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.4rem, 6vw, 2rem);
+	font-weight: 800;
+}
+
+.ca-nav .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__submenu-container .wp-block-navigation-item__content {
+	font-family: var(--wp--preset--font-family--primary);
+	font-size: 1.1rem;
+	font-weight: 600;
+}
+
+.ca-nav .wp-block-navigation__responsive-container-open,
+.ca-nav .wp-block-navigation__responsive-container-close {
+	inline-size: 46px;
+	block-size: 46px;
+	justify-content: center;
+	align-items: center;
+}
+
+.ca-nav .wp-block-navigation__responsive-container-open:not(.always-shown),
+.ca-nav .wp-block-navigation__responsive-container-open {
+	color: var(--ca-blanco);
+	background: transparent;
+	box-shadow: inset 0 0 0 1px rgb(238 244 248 / .35);
+	border-radius: 2px;
+}
+
+.ca-nav .wp-block-navigation__responsive-container-open:hover {
+	box-shadow: inset 0 0 0 1px var(--ca-cobre-claro);
+}
+
+
+/* 6. Portada (hero)
+   ========================================================================== */
+
+.ca-hero {
+	position: relative;
+	isolation: isolate;
+	overflow: clip;
+	padding-block: clamp(1.75rem, 5vw, 4.5rem) clamp(4rem, 9vw, 7.5rem);
+	background-image:
+		radial-gradient(90% 70% at 88% 6%, rgb(255 255 255 / .07), transparent 62%),
+		repeating-linear-gradient(180deg, rgb(255 255 255 / .022) 0 1px, transparent 1px 5px);
+}
+
+/* Cara de un bombín (anillos, escala y bocallave) como fondo de la portada. */
+.ca-hero::before,
+.ca-intro--servicio::before {
+	content: "";
+	position: absolute;
+	z-index: -1;
+	inset-block-start: -11rem;
+	inset-inline-end: -16rem;
+	inline-size: 26rem;
+	aspect-ratio: 1;
+	pointer-events: none;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none' stroke='%23EEF4F8' stroke-width='.5'%3E%3Ccircle cx='100' cy='100' r='99' stroke-opacity='.14'/%3E%3Ccircle cx='100' cy='100' r='88' stroke-opacity='.3' stroke-width='3' stroke-dasharray='.4 2.86'/%3E%3Ccircle cx='100' cy='100' r='76' stroke-opacity='.14'/%3E%3Ccircle cx='100' cy='100' r='54' stroke='%23C86D51' stroke-opacity='.55'/%3E%3Ccircle cx='100' cy='100' r='50' stroke='%23C86D51' stroke-opacity='.25'/%3E%3Cpath d='M96 64h8v14l-4 5 4 5v14l-4 5 4 5v15h-8v-15l4-5-4-5v-14l4-5-4-5z' stroke='%23C86D51' stroke-opacity='.7' stroke-width='.8'/%3E%3Cpath d='M100 0v18M100 182v18M0 100h18M182 100h18' stroke-opacity='.25'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+@media (min-width: 782px) {
+	.ca-hero::before,
+	.ca-intro--servicio::before {
+		inset-block-start: clamp(-12rem, -11vw, -5rem);
+		inset-inline-end: clamp(-22rem, -22vw, -9rem);
+		inline-size: clamp(30rem, 52vw, 46rem);
+	}
+}
+
+.ca-hero::after {
+	inset-block-end: calc(var(--ca-cut) + 18px);
+}
+
+.wp-block-group.ca-hero__grid {
+	display: grid;
+	gap: clamp(2.5rem, 5vw, 3rem);
+}
+
+@media (min-width: 1000px) {
+	.wp-block-group.ca-hero__grid {
+		grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+		column-gap: clamp(3rem, 7vw, 7rem);
+		align-items: end;
+	}
+}
+
+.wp-block-group.ca-hero__main {
+	container-type: inline-size;
+	display: grid;
+	gap: 1.15rem;
+}
+
+.wp-block-group.ca-hero__main > *,
+.wp-block-group.ca-hero__grid > *,
+.wp-block-group.ca-hero__cta > * {
+	margin: 0;
+}
+
+.ca-hero__direccion {
+	color: var(--ca-cobre-claro);
+}
+
+@media (max-width: 479px) {
+	.ca-hero__direccion {
+		letter-spacing: .06em;
+	}
+}
+
+/*
+ * H1 "Cerrajeros Arroyomolinos". Cada palabra va en su línea (word-spacing),
+ * la primera como rótulo pequeño espaciado y la segunda a todo el ancho del
+ * contenedor (unidades cqi). El alto de línea es fijo, así que el cambio de
+ * fuente al cargar no mueve nada (sin CLS).
+ */
+.ca-hero__titulo {
+	margin: 0;
+	font-size: clamp(2.25rem, 11vw, 7.6rem);
+	font-size: min(12.8cqi, 7.6rem);
+	line-height: .92;
+	letter-spacing: -.035em;
+	word-spacing: 100vw;
+	color: var(--ca-blanco);
+}
+
+.ca-hero__titulo::first-line {
+	font-size: .36em;
+	letter-spacing: .34em;
+	line-height: 1.9;
+	text-transform: uppercase;
+	color: var(--ca-cobre-claro);
+}
+
+/* Bajo el nombre, el perfil de una llave. */
+.ca-hero__titulo::after {
+	content: "";
+	display: block;
+	block-size: .15em;
+	margin-block-start: .16em;
+	background: linear-gradient(90deg, var(--ca-cobre), var(--ca-cobre-claro) 40%, var(--ca-cobre) 80%);
+	clip-path: polygon(
+		0 35%, 5% 35%, 6.5% 0, 9.5% 0, 11% 60%, 14% 60%, 15.5% 12%, 18.5% 12%,
+		20% 78%, 23% 78%, 24.5% 25%, 27.5% 25%, 29% 35%,
+		97% 35%, 100% 100%, 0 100%
+	);
+}
+
+.ca-hero__lead {
+	max-inline-size: 36rem;
+	font-size: clamp(1.0625rem, .95rem + .5vw, 1.3rem);
+	line-height: 1.55;
+	color: rgb(238 244 248 / .86);
+}
+
+.wp-block-group.ca-hero__cta {
+	display: grid;
+	gap: .6rem;
+	justify-items: start;
+	margin-block-start: .4rem;
+}
+
+.ca-cta__rotulo {
+	display: flex;
+	align-items: center;
+	gap: .6em;
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	font-weight: 600;
+	letter-spacing: .14em;
+	text-transform: uppercase;
+	color: var(--ca-acento);
+}
+
+.ca-cta__rotulo::after {
+	content: "";
+	inline-size: 2.5rem;
+	block-size: 10px;
+	background: linear-gradient(currentColor, currentColor) left 50% / 100% 2px no-repeat;
+	clip-path: polygon(0 40%, 85% 40%, 85% 0, 100% 50%, 85% 100%, 85% 60%, 0 60%);
+}
+
+/* Índice de servicios de la portada. */
+.ca-hero__indice-titulo {
+	margin: 0 0 .9rem;
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	font-weight: 600;
+	letter-spacing: .14em;
+	line-height: 1.3;
+	text-transform: uppercase;
+	color: var(--ca-acento);
+}
+
+.ca-indice {
+	counter-reset: ca-indice;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border-block-start: 1px solid var(--ca-regla);
+}
+
+.ca-indice > li {
+	counter-increment: ca-indice;
+	margin: 0;
+	border-block-end: 1px solid var(--ca-regla);
+}
+
+.ca-indice a {
+	display: grid;
+	grid-template-columns: 2.4rem 1fr auto;
+	align-items: baseline;
+	gap: .5rem;
+	padding: 1rem .25rem;
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.05rem, .95rem + .45vw, 1.3rem);
+	font-weight: 800;
+	line-height: 1.15;
+	text-decoration: none !important;
+	color: inherit;
+	transition: color .2s, padding .3s var(--ca-ease);
+}
+
+.ca-indice a::before {
+	content: counter(ca-indice, decimal-leading-zero);
+	content: counter(ca-indice, decimal-leading-zero) / "";
+	font-family: var(--ca-mono);
+	font-size: .75rem;
+	font-weight: 600;
+	letter-spacing: .08em;
+	color: var(--ca-acento);
+}
+
+.ca-indice a::after {
+	content: "→";
+	content: "→" / "";
+	color: var(--ca-acento);
+	transition: transform .25s var(--ca-ease);
+}
+
+.ca-indice a:hover {
+	padding-inline-start: .6rem;
+	color: var(--ca-cobre-claro);
+}
+
+.ca-indice a:hover::after {
+	transform: translateX(4px);
+}
+
+/* 404 */
+.ca-error__titulo {
+	margin: 0;
+	font-size: clamp(2.5rem, 8vw, 6rem);
+	line-height: .95;
+	letter-spacing: -.03em;
+}
+
+
+/* 7. Introducciones y migas de pan
+   ========================================================================== */
+
+.ca-intro {
+	position: relative;
+	isolation: isolate;
+	overflow: clip;
+	padding-block: clamp(1.25rem, 3vw, 2rem) clamp(3.5rem, 8vw, 6rem);
+}
+
+.ca-intro--servicio {
+	background-image:
+		radial-gradient(80% 70% at 90% 0%, rgb(255 255 255 / .06), transparent 60%),
+		repeating-linear-gradient(180deg, rgb(255 255 255 / .022) 0 1px, transparent 1px 5px);
+}
+
+.ca-intro--servicio::before {
+	opacity: .6;
+}
+
+.ca-intro--servicio::after {
+	inset-block-end: calc(var(--ca-cut) + 14px);
+}
+
+.wp-block-group.ca-intro__grid {
+	display: grid;
+	gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.wp-block-group.ca-intro__grid > *,
+.wp-block-group.ca-intro__main > *,
+.wp-block-group.ca-intro__ficha > *,
+.wp-block-group.ca-intro__aparte > * {
+	margin: 0;
+}
+
+.wp-block-group.ca-intro__main {
+	container-type: inline-size;
+	display: grid;
+	gap: 1rem;
+}
+
+.ca-intro__titulo {
+	font-size: clamp(2.3rem, 1.3rem + 4.6vw, 5.25rem);
+	line-height: .98;
+	letter-spacing: -.03em;
+}
+
+.ca-intro__lead {
+	max-inline-size: 40rem;
+	font-size: clamp(1.0625rem, .95rem + .5vw, 1.3rem);
+	line-height: 1.55;
+}
+
+.ca-intro--servicio .ca-intro__lead {
+	color: rgb(238 244 248 / .86);
+}
+
+.wp-block-group.ca-intro__ficha {
+	display: grid;
+	gap: 1rem;
+	align-content: start;
+	padding-block-start: 1.25rem;
+	border-block-start: 2px solid var(--ca-cobre);
+}
+
+.ca-ficha-lista {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ca-ficha-lista > li {
+	position: relative;
+	margin: 0;
+	padding: .7rem 0 .7rem 1.6rem;
+	border-block-end: 1px solid var(--ca-regla);
+}
+
+.ca-ficha-lista > li::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: .15rem;
+	inset-block-start: 1.15rem;
+	inline-size: .5rem;
+	block-size: .5rem;
+	background: var(--ca-cobre);
+	rotate: 45deg;
+}
+
+.ca-intro__figura img {
+	max-block-size: 18rem;
+}
+
+@media (min-width: 1000px) {
+	.wp-block-group.ca-intro__grid {
+		grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+		column-gap: clamp(3rem, 6vw, 6rem);
+	}
+
+	.ca-intro__grid > .ca-migas {
+		grid-column: 1 / -1;
+	}
+
+	.ca-intro--pagina .ca-intro__grid {
+		align-items: end;
+	}
+}
+
+/* Introducción editorial (fondo hielo, título enorme, regla de cobre). */
+.ca-intro--pagina {
+	padding-block-end: clamp(3rem, 7vw, 5rem);
+	border-block-end: 1px solid var(--ca-linea);
+}
+
+.ca-intro--pagina .ca-intro__titulo {
+	font-size: clamp(2.1rem, 1rem + 6vw, 6.5rem);
+}
+
+.ca-intro--pagina .ca-intro__titulo::after {
+	content: "";
+	display: block;
+	inline-size: 2.4em;
+	block-size: .14em;
+	margin-block-start: .2em;
+	background: var(--ca-cobre);
+	clip-path: polygon(
+		0 35%, 10% 35%, 13% 0, 19% 0, 22% 60%, 28% 60%, 31% 12%, 37% 12%,
+		40% 78%, 46% 78%, 49% 25%, 55% 25%, 58% 35%,
+		94% 35%, 100% 100%, 0 100%
+	);
+}
+
+.wp-block-group.ca-intro__aparte {
+	display: grid;
+	gap: 1rem;
+}
+
+.ca-intro__telefono {
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--small);
+	letter-spacing: .04em;
+}
+
+.ca-intro__telefono a {
+	font-weight: 700;
+}
+
+/* Migas de pan. */
+.ca-migas {
+	margin-block: 0 clamp(1.25rem, 3vw, 2.25rem) !important;
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	letter-spacing: .03em;
+}
+
+.ca-migas ol {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .25rem .55rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ca-migas li {
+	display: inline-flex;
+	align-items: center;
+	gap: .55rem;
+	margin: 0;
+}
+
+.ca-migas li + li::before {
+	content: "/";
+	content: "/" / "";
+	opacity: .5;
+}
+
+.ca-migas a {
+	color: inherit;
+	text-decoration-color: transparent !important;
+}
+
+.ca-migas a:hover {
+	text-decoration-color: var(--ca-cobre) !important;
+}
+
+.ca-migas [aria-current] {
+	opacity: .78;
+}
+
+
+/* 8. Secciones
+   ========================================================================== */
+
+/* — ¿Te suena alguno de estos problemas? — */
+@media (min-width: 900px) {
+	.ca-problemas .ca-cabecera,
+	.ca-problemas__cabecera {
+		position: sticky;
+		top: 2rem;
+	}
+}
+
+.wp-block-group.ca-problemas__cabecera > * {
+	margin: 0;
+}
+
+.ca-problemas__cierre {
+	margin-block-start: 1.75rem !important;
+	padding-inline-start: 1rem;
+	border-inline-start: 3px solid var(--ca-cobre);
+	font-weight: 600;
+}
+
+/* — Servicios: índice escalonado como los dientes de una llave — */
+.wp-block-group.ca-servicios__lista {
+	margin-block-start: clamp(2.5rem, 5vw, 4rem) !important;
+	border-block-start: 1px solid var(--ca-regla);
+}
+
+.wp-block-group.ca-servicio {
+	position: relative;
+	display: grid;
+	grid-template-columns: 3rem minmax(0, 1fr);
+	column-gap: 1rem;
+	margin: 0;
+	padding-block: clamp(1.5rem, 3vw, 2.4rem);
+	padding-inline-start: var(--ca-paso, 0);
+	border-block-end: 1px solid var(--ca-regla);
+	transition: background-color .25s;
+}
+
+.wp-block-group.ca-servicio > * {
+	margin: 0;
+}
+
+.ca-servicio__num {
+	grid-row: span 2;
+	padding-block-start: .7em;
+	font-family: var(--ca-mono);
+	font-size: .82rem;
+	font-weight: 600;
+	color: var(--ca-acento);
+}
+
+.ca-servicio__titulo {
+	font-size: clamp(1.55rem, .9rem + 3vw, 3.25rem);
+	line-height: 1.02;
+	letter-spacing: -.025em;
+}
+
+.ca-servicio__titulo a {
+	text-decoration: none !important;
+	color: inherit;
+}
+
+/* Toda la fila es clicable sin repetir enlaces. */
+.ca-servicio__titulo a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+.ca-servicio__titulo a::before {
+	content: "→";
+	content: "→" / "";
+	float: inline-end;
+	margin-inline-start: 1rem;
+	font-size: .7em;
+	color: var(--ca-acento);
+	transition: transform .3s var(--ca-ease);
+}
+
+.ca-servicio__texto {
+	max-inline-size: 40rem;
+	margin-block-start: .7rem !important;
+	color: var(--ca-texto-suave);
+}
+
+.wp-block-group.ca-servicio:hover {
+	background-color: rgb(238 244 248 / .7);
+}
+
+.wp-block-group.ca-servicio:hover .ca-servicio__titulo a {
+	color: var(--ca-cobre-profundo);
+}
+
+.wp-block-group.ca-servicio:hover .ca-servicio__titulo a::before {
+	transform: translateX(6px);
+}
+
+@media (min-width: 900px) {
+	.wp-block-group.ca-servicio:nth-child(4n + 2) { --ca-paso: 14%; }
+	.wp-block-group.ca-servicio:nth-child(4n + 3) { --ca-paso: 6%; }
+	.wp-block-group.ca-servicio:nth-child(4n + 4) { --ca-paso: 20%; }
+
+	/* El tramo de cobre sobre cada fila dibuja el perfil de la llave. */
+	.wp-block-group.ca-servicio:not(:nth-child(4n + 1))::before {
+		content: "";
+		position: absolute;
+		inset-block-start: -2px;
+		inset-inline-start: 0;
+		inline-size: var(--ca-paso, 0);
+		block-size: 10px;
+		border-block-start: 3px solid var(--ca-cobre);
+		border-inline-end: 3px solid var(--ca-cobre);
+	}
+}
+
+/* — ¿Cómo trabajamos? Pitones que se alinean en la línea de corte — */
+.wp-block-group.ca-pasos {
+	--ca-zona: 150px;
+	--ca-corte-y: 92px;
+	position: relative;
+	display: grid;
+	gap: 2.25rem;
+	margin-block-start: clamp(2.5rem, 6vw, 4.5rem) !important;
+	padding-inline-start: 1.75rem;
+	border-inline-start: 3px solid var(--ca-cobre);
+}
+
+.wp-block-group.ca-pasos > * {
+	margin: 0;
+}
+
+.wp-block-group.ca-paso {
+	position: relative;
+	display: grid;
+	gap: .6rem;
+	align-content: start;
+}
+
+.wp-block-group.ca-paso > * {
+	margin: 0;
+}
+
+.wp-block-group.ca-paso::before {
+	/* Muesca en la "hoja" de la llave (móvil). */
+	content: "";
+	position: absolute;
+	inset-inline-start: calc(-1.75rem - 11px);
+	inset-block-start: .2rem;
+	inline-size: 19px;
+	block-size: 19px;
+	background: var(--ca-petroleo);
+	border: 3px solid var(--ca-cobre);
+	rotate: 45deg;
+}
+
+.ca-paso__num {
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	font-weight: 600;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+	color: var(--ca-acento);
+}
+
+.ca-paso__titulo {
+	font-size: clamp(1.3rem, 1rem + 1vw, 1.65rem);
+}
+
+.ca-paso__texto {
+	color: var(--ca-texto-suave);
+}
+
+.ca-metodo__cierre {
+	margin-block-start: clamp(2.5rem, 5vw, 3.5rem) !important;
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+	font-weight: 800;
+}
+
+.ca-metodo__cierre a {
+	white-space: nowrap;
+}
+
+@media (min-width: 782px) {
+	.wp-block-group.ca-pasos {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		column-gap: clamp(1.5rem, 3vw, 3rem);
+		padding-block-start: calc(var(--ca-zona) + 28px);
+		padding-inline-start: 0;
+		border-inline-start: 0;
+	}
+
+	/* Línea de corte. */
+	.wp-block-group.ca-pasos::before {
+		content: "";
+		position: absolute;
+		inset-inline: -1rem;
+		inset-block-start: calc(var(--ca-corte-y) - 1px);
+		block-size: 2px;
+		background: repeating-linear-gradient(90deg, var(--ca-cobre) 0 9px, transparent 9px 15px);
+	}
+
+	.wp-block-group.ca-pasos::after {
+		content: "Línea de corte";
+		content: "Línea de corte" / "";
+		position: absolute;
+		inset-inline-end: 0;
+		inset-block-start: calc(var(--ca-corte-y) + 8px);
+		font-family: var(--ca-mono);
+		font-size: .7rem;
+		letter-spacing: .14em;
+		text-transform: uppercase;
+		color: var(--ca-acento);
+	}
+
+	.wp-block-group.ca-paso:nth-child(1) { --ca-pin: 34px; --ca-off: -15px; }
+	.wp-block-group.ca-paso:nth-child(2) { --ca-pin: 20px; --ca-off: 12px; }
+	.wp-block-group.ca-paso:nth-child(3) { --ca-pin: 42px; --ca-off: -8px; }
+	.wp-block-group.ca-paso:nth-child(4) { --ca-pin: 27px; --ca-off: 17px; }
+
+	/* Cámara del pitón con su muelle. */
+	.wp-block-group.ca-paso::before {
+		inset-inline-start: 0;
+		inset-block-start: calc(-1 * (var(--ca-zona) + 28px));
+		inline-size: 30px;
+		block-size: var(--ca-zona);
+		rotate: none;
+		border: 1px solid rgb(238 244 248 / .24);
+		border-radius: 4px 4px 0 0;
+		background:
+			repeating-linear-gradient(162deg, transparent 0 5px, rgb(238 244 248 / .5) 5px 6.5px, transparent 6.5px 8px) center 5px / 18px calc(var(--ca-corte-y) - 47px) no-repeat,
+			rgb(7 26 51 / .45);
+	}
+
+	/* Contrapitón (hielo) + pitón (cobre) con un hueco que cae en la línea de corte. */
+	.wp-block-group.ca-paso::after {
+		content: "";
+		position: absolute;
+		inset-inline-start: 5px;
+		inset-block-start: calc(var(--ca-corte-y) - 40px - var(--ca-zona) - 28px);
+		inline-size: 20px;
+		block-size: calc(42px + var(--ca-pin));
+		border-radius: 3px 3px 0 0;
+		background:
+			linear-gradient(var(--ca-linea), var(--ca-linea)) top / 100% 38px no-repeat,
+			linear-gradient(var(--ca-cobre-claro), var(--ca-cobre)) bottom / 100% var(--ca-pin) no-repeat;
+		clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), 50% 100%, 0 calc(100% - 8px));
+	}
+}
+
+/* — ¿Qué te ha pasado? Etiquetas de llavero desplegables — */
+.wp-block-group.ca-situaciones__lista {
+	display: grid;
+	gap: .75rem;
+}
+
+.wp-block-group.ca-situaciones__lista > * {
+	margin: 0;
+}
+
+.wp-block-details.ca-situacion {
+	margin: 0;
+}
+
+.wp-block-details.ca-situacion > summary {
+	position: relative;
+	isolation: isolate;
+	display: flex;
+	align-items: center;
+	min-block-size: 3.75rem;
+	padding: .95rem 3.5rem .95rem 3.5rem;
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.08rem, .95rem + .55vw, 1.35rem);
+	font-weight: 800;
+	line-height: 1.2;
+	list-style: none;
+	cursor: pointer;
+}
+
+.wp-block-details.ca-situacion > summary::-webkit-details-marker {
+	display: none;
+}
+
+/* Forma de etiqueta con su agujero. */
+.wp-block-details.ca-situacion > summary::before {
+	content: "";
+	position: absolute;
+	z-index: -1;
+	inset: 0;
+	background:
+		radial-gradient(circle at 1.85rem 50%, var(--ca-blanco) 0 .4rem, var(--ca-petroleo) calc(.4rem + .5px) calc(.4rem + 2.5px), transparent calc(.4rem + 3px)),
+		var(--ca-hielo);
+	clip-path: polygon(1.15rem 0, 100% 0, 100% 100%, 1.15rem 100%, 0 50%);
+	transition: background-color .2s;
+}
+
+.wp-block-details.ca-situacion > summary::after {
+	content: "";
+	position: absolute;
+	inset-inline-end: 1.3rem;
+	inset-block-start: 50%;
+	inline-size: 1rem;
+	block-size: 1rem;
+	margin-block-start: -.5rem;
+	background:
+		linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
+		linear-gradient(currentColor, currentColor) center / 2px 100% no-repeat;
+	transition: transform .3s var(--ca-ease);
+}
+
+.wp-block-details.ca-situacion > summary:hover::before {
+	background:
+		radial-gradient(circle at 1.85rem 50%, var(--ca-blanco) 0 .4rem, var(--ca-petroleo) calc(.4rem + .5px) calc(.4rem + 2.5px), transparent calc(.4rem + 3px)),
+		#e2ebf2;
+}
+
+.wp-block-details.ca-situacion[open] > summary {
+	color: var(--ca-blanco);
+}
+
+.wp-block-details.ca-situacion[open] > summary::before {
+	background:
+		radial-gradient(circle at 1.85rem 50%, var(--ca-cobre) 0 .4rem, transparent calc(.4rem + .5px)),
+		var(--ca-petroleo);
+}
+
+.wp-block-details.ca-situacion[open] > summary::after {
+	transform: rotate(45deg);
+}
+
+.wp-block-details.ca-situacion > :not(summary) {
+	margin: 0;
+	padding-inline: 3.5rem 1rem;
+}
+
+.wp-block-details.ca-situacion > summary + * {
+	padding-block-start: 1rem;
+}
+
+.wp-block-details.ca-situacion > :last-child {
+	padding-block-end: 1.25rem;
+}
+
+.ca-situacion__enlace {
+	margin-block-start: .6rem !important;
+	font-weight: 700;
+}
+
+/* — Por qué elegirnos: manifiesto + ficha técnica — */
+.ca-razones__manifiesto {
+	font-size: clamp(2rem, 1.2rem + 3.6vw, 3.75rem);
+	line-height: 1;
+	letter-spacing: -.03em;
+}
+
+.wp-block-group.ca-razones__texto {
+	display: grid;
+	gap: 1.25rem;
+}
+
+.wp-block-group.ca-razones__texto > * {
+	margin: 0;
+}
+
+@media (min-width: 900px) {
+	.ca-razones .wp-block-group.ca-dos-columnas {
+		grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+	}
+
+	.wp-block-group.ca-razones__texto {
+		position: sticky;
+		top: 2rem;
+	}
+}
+
+.wp-block-group.ca-ficha {
+	border-block-start: 2px solid currentColor;
+}
+
+.wp-block-group.ca-ficha > * {
+	margin: 0;
+}
+
+.wp-block-group.ca-ficha__fila {
+	display: grid;
+	grid-template-columns: minmax(7rem, 32%) minmax(0, 1fr);
+	gap: 1rem;
+	padding-block: 1.15rem;
+	border-block-end: 1px solid var(--ca-regla);
+}
+
+.wp-block-group.ca-ficha__fila > * {
+	margin: 0;
+}
+
+.ca-ficha__clave {
+	padding-block-start: .3em;
+	font-family: var(--ca-mono);
+	font-size: .8rem;
+	font-weight: 600;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+	color: var(--ca-acento);
+}
+
+.ca-ficha__valor {
+	font-size: clamp(1.05rem, 1rem + .2vw, 1.15rem);
+}
+
+/* — Ventajas: cintas rotuladas sobre plano — */
+.wp-block-group.ca-ventajas__lista {
+	display: grid;
+	gap: 2.5rem 3rem;
+	margin-block-start: clamp(2.5rem, 5vw, 3.5rem) !important;
+}
+
+@media (min-width: 700px) {
+	.wp-block-group.ca-ventajas__lista {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (min-width: 1100px) {
+	.wp-block-group.ca-ventajas__lista {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	.wp-block-group.ca-ventaja:nth-child(even) {
+		margin-block-start: 2.5rem !important;
+	}
+}
+
+.wp-block-group.ca-ventaja {
+	display: grid;
+	gap: 1rem;
+	align-content: start;
+	margin: 0;
+}
+
+.wp-block-group.ca-ventaja > * {
+	margin: 0;
+}
+
+.ca-ventaja:nth-child(even) .is-style-ca-cinta {
+	rotate: .9deg;
+	background: var(--ca-grafito);
+}
+
+.ca-ventaja:nth-child(3) .is-style-ca-cinta {
+	color: var(--ca-tinta);
+	background: var(--ca-cobre);
+	text-shadow: 0 1px 0 rgb(255 255 255 / .3);
+	rotate: -.6deg;
+}
+
+/* — Confianza: placa de datos de acero — */
+.ca-confianza__consejo {
+	padding-inline-start: 1rem;
+	border-inline-start: 3px solid var(--ca-cobre);
+	color: var(--ca-texto-suave);
+}
+
+.wp-block-group.ca-confianza__texto {
+	display: grid;
+	gap: 1.2rem;
+}
+
+.wp-block-group.ca-confianza__texto > *,
+.wp-block-group.ca-placa > * {
+	margin: 0;
+}
+
+@media (min-width: 1100px) {
+	.ca-confianza .wp-block-group.ca-dos-columnas {
+		grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+		align-items: center;
+	}
+
+	.wp-block-group.ca-placa {
+		rotate: -1.2deg;
+		transition: rotate .5s var(--ca-ease);
+	}
+
+	.wp-block-group.ca-placa:hover {
+		rotate: 0deg;
+	}
+}
+
+.wp-block-group.ca-placa {
+	container-type: inline-size;
+	display: grid;
+	gap: .8rem;
+}
+
+.ca-placa__nombre {
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.15rem, 1rem + .6vw, 1.45rem);
+	font-weight: 800;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+}
+
+.ca-placa__direccion {
+	padding-block: .8rem;
+	border-block: 1px solid var(--ca-regla);
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--small);
+	line-height: 1.6;
+}
+
+.ca-placa__telefono {
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.5rem, 1.2rem + 2.4vw, 2.6rem);
+	font-size: min(9.5cqi, 2.6rem);
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+	line-height: 1.1;
+}
+
+.ca-placa__telefono a {
+	text-decoration: none !important;
+}
+
+.ca-placa .wp-block-buttons {
+	margin-block-start: .4rem !important;
+}
+
+/* — Llamada a la acción: placa de cobre — */
+.ca-cta {
+	padding-block: clamp(3rem, 7vw, 6rem);
+}
+
+.wp-block-group.ca-cta-placa {
+	position: relative;
+	display: grid;
+	gap: 2rem;
+	padding: clamp(1.4rem, 5vw, 4rem);
+	border-radius: 4px;
+	background-image:
+		var(--ca-tornillo-cobre), var(--ca-tornillo-cobre), var(--ca-tornillo-cobre), var(--ca-tornillo-cobre),
+		repeating-linear-gradient(90deg, rgb(255 255 255 / .06) 0 1px, transparent 1px 3px),
+		linear-gradient(105deg, #b45a40 0%, #dc9479 30%, #c86d51 52%, #b7604a 76%, #a9533b 100%);
+	background-position: 14px 14px, calc(100% - 14px) 14px, 14px calc(100% - 14px), calc(100% - 14px) calc(100% - 14px), 0 0, 0 0;
+	background-size: 9px 9px, 9px 9px, 9px 9px, 9px 9px, auto, auto;
+	background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, no-repeat;
+	box-shadow:
+		inset 0 1px 0 rgb(255 255 255 / .4),
+		inset 0 -2px 0 rgb(0 0 0 / .2),
+		0 40px 70px -40px rgb(11 37 69 / .55);
+	text-shadow: 0 1px 0 rgb(255 255 255 / .25);
+}
+
+.wp-block-group.ca-cta-placa > *,
+.wp-block-group.ca-cta-placa__texto-grupo > *,
+.wp-block-group.ca-cta-placa__accion > * {
+	margin: 0;
+}
+
+.wp-block-group.ca-cta-placa__texto-grupo {
+	display: grid;
+	gap: 1rem;
+}
+
+.ca-cta-placa__titulo {
+	font-size: clamp(1.9rem, 1rem + 3.6vw, 3.6rem);
+	line-height: 1;
+	letter-spacing: -.025em;
+}
+
+.ca-cta-placa__texto {
+	font-size: clamp(1.05rem, 1rem + .3vw, 1.2rem);
+	font-weight: 500;
+}
+
+.wp-block-group.ca-cta-placa__accion {
+	display: grid;
+	gap: 1rem;
+	justify-items: start;
+}
+
+.ca-cta-placa .wp-block-button__link {
+	padding: .85em 1.15em;
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.05rem, .6rem + 2.6vw, 1.75rem);
+	color: var(--ca-hielo);
+	background-color: var(--ca-tinta);
+	text-shadow: none;
+}
+
+.ca-cta-placa .wp-block-button__link:hover,
+.ca-cta-placa .wp-block-button__link:focus-visible {
+	color: var(--ca-blanco);
+	background-color: var(--ca-petroleo);
+}
+
+.ca-cta-placa__pie {
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	letter-spacing: .05em;
+}
+
+@media (min-width: 900px) {
+	.wp-block-group.ca-cta-placa {
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: end;
+		column-gap: 4rem;
+	}
+}
+
+/* — Franja de llamada — */
+.ca-franja {
+	position: relative;
+	padding-block: clamp(2rem, 4.5vw, 2.75rem) clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.ca-franja::before {
+	inset-block-start: 0;
+	rotate: 180deg;
+}
+
+.wp-block-group.ca-franja__interior {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem 2rem;
+}
+
+.wp-block-group.ca-franja__interior > * {
+	margin: 0;
+}
+
+.ca-franja__texto {
+	max-inline-size: 34ch;
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.25rem, 1rem + 1.2vw, 1.75rem);
+	font-weight: 800;
+	line-height: 1.15;
+}
+
+/* — Zonas donde trabajamos — */
+@media (min-width: 900px) {
+	.ca-zonas .wp-block-group.ca-dos-columnas {
+		grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+		align-items: center;
+	}
+}
+
+.wp-block-group.ca-zonas__marca {
+	container-type: inline-size;
+	position: relative;
+	display: grid;
+	gap: .5rem;
+	justify-items: start;
+}
+
+.wp-block-group.ca-zonas__marca > *,
+.wp-block-group.ca-zonas__texto > * {
+	margin: 0;
+}
+
+.ca-zonas__cp {
+	font-family: var(--ca-rotulo);
+	font-size: clamp(4.5rem, 20vw, 13.5rem);
+	font-size: min(29cqi, 13.5rem);
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+	line-height: .82;
+	letter-spacing: -.045em;
+	color: var(--ca-cobre);
+}
+
+@supports (-webkit-text-stroke: 1px black) {
+	.ca-zonas__cp {
+		color: rgb(200 109 81 / .08);
+		-webkit-text-stroke: 2px var(--ca-cobre);
+	}
+}
+
+/* Punto de mira sobre el código postal: "estamos aquí". */
+.wp-block-group.ca-zonas__marca::after {
+	content: "";
+	position: absolute;
+	inset-block-start: -1.25rem;
+	inset-inline-start: clamp(9rem, 44%, 16rem);
+	inline-size: 3.5rem;
+	block-size: 3.5rem;
+	border-radius: 50%;
+	background:
+		radial-gradient(circle, var(--ca-cobre) 0 5px, transparent 5.5px),
+		linear-gradient(var(--ca-petroleo), var(--ca-petroleo)) center / 2px 100% no-repeat,
+		linear-gradient(var(--ca-petroleo), var(--ca-petroleo)) center / 100% 2px no-repeat;
+	box-shadow: inset 0 0 0 2px var(--ca-petroleo), 0 0 0 7px rgb(200 109 81 / .14);
+	-webkit-mask: radial-gradient(circle, #000 0 5.5px, transparent 6px 11px, #000 11.5px);
+	mask: radial-gradient(circle, #000 0 5.5px, transparent 6px 11px, #000 11.5px);
+}
+
+.wp-block-group.ca-zonas__texto {
+	display: grid;
+	gap: 1.15rem;
+	justify-items: start;
+}
+
+.ca-zonas__lista {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .5rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ca-zonas__lista > li {
+	margin: 0;
+	padding: .5em .85em;
+	border: 1px solid var(--ca-linea);
+	border-inline-start: 3px solid var(--ca-cobre);
+	font-size: var(--wp--preset--font-size--small);
+	font-weight: 600;
+	background: var(--ca-blanco);
+}
+
+.ca-zonas__nota {
+	color: var(--ca-texto-suave);
+}
+
+/* — Texto + imagen — */
+@media (min-width: 900px) {
+	.ca-texto-imagen .wp-block-group.ca-dos-columnas {
+		align-items: center;
+	}
+
+	.ca-texto-imagen--derecha .wp-block-group.ca-dos-columnas {
+		grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+	}
+
+	.ca-texto-imagen--izquierda .wp-block-group.ca-dos-columnas {
+		grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+	}
+}
+
+.wp-block-group.ca-texto-imagen__texto {
+	display: grid;
+	gap: 1.15rem;
+}
+
+.wp-block-group.ca-texto-imagen__texto > *,
+.wp-block-group.ca-texto-imagen__figura > * {
+	margin: 0;
+}
+
+/* Sombra desplazada de cobre: cada variante hacia un lado distinto. */
+.ca-texto-imagen .is-style-ca-marco::after {
+	display: none;
+}
+
+.ca-texto-imagen--derecha .is-style-ca-marco img {
+	box-shadow: 18px 18px 0 -1px var(--ca-blanco), 18px 18px 0 0 var(--ca-cobre);
+}
+
+.ca-texto-imagen--izquierda .is-style-ca-marco img {
+	box-shadow: -18px 18px 0 -1px var(--ca-hielo), -18px 18px 0 0 var(--ca-petroleo);
+}
+
+/* — Texto centrado con plomada — */
+.ca-centrado {
+	text-align: center;
+}
+
+.ca-centrado::before {
+	content: "";
+	display: block;
+	inline-size: 2px;
+	block-size: clamp(3rem, 8vw, 5.5rem);
+	margin: 0 auto 1.75rem;
+	background: linear-gradient(transparent, var(--ca-cobre));
+}
+
+.ca-centrado::after {
+	content: "";
+	position: absolute;
+	inset-inline-start: 50%;
+	inset-block-start: calc(var(--ca-seccion-pad) + clamp(3rem, 8vw, 5.5rem) - 4px);
+	inline-size: 10px;
+	block-size: 10px;
+	translate: -50% 0;
+	rotate: 45deg;
+	background: var(--ca-cobre);
+}
+
+.ca-centrado > * + * {
+	margin-block-start: 1.25rem;
+}
+
+.ca-centrado__titulo {
+	font-size: clamp(2.1rem, 1.2rem + 3.8vw, 3.9rem);
+	line-height: 1;
+	letter-spacing: -.03em;
+}
+
+.ca-centrado__lead {
+	font-size: clamp(1.15rem, 1rem + .7vw, 1.5rem);
+	line-height: 1.5;
+}
+
+.ca-centrado__texto {
+	color: var(--ca-texto-suave);
+}
+
+/* — Preguntas frecuentes — */
+@media (min-width: 900px) {
+	.ca-preguntas .wp-block-group.ca-dos-columnas {
+		grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+	}
+
+	.ca-preguntas__cabecera {
+		position: sticky;
+		top: 2rem;
+	}
+}
+
+.wp-block-group.ca-preguntas__lista {
+	counter-reset: ca-faq;
+	border-block-start: 2px solid currentColor;
+}
+
+.wp-block-group.ca-preguntas__lista > * {
+	margin: 0;
+}
+
+.wp-block-group.ca-faq__item {
+	counter-increment: ca-faq;
+	position: relative;
+	padding: 1.5rem 0 1.6rem 3.4rem;
+	border-block-end: 1px solid var(--ca-regla);
+}
+
+.wp-block-group.ca-faq__item::before {
+	content: counter(ca-faq, decimal-leading-zero);
+	content: counter(ca-faq, decimal-leading-zero) / "";
+	position: absolute;
+	inset-inline-start: 0;
+	inset-block-start: 1.85rem;
+	font-family: var(--ca-mono);
+	font-size: .8rem;
+	font-weight: 600;
+	letter-spacing: .06em;
+	color: var(--ca-acento);
+}
+
+.ca-faq__pregunta {
+	margin: 0 !important;
+	font-size: clamp(1.15rem, 1rem + .6vw, 1.42rem);
+	line-height: 1.2;
+}
+
+.ca-faq__answer,
+.wp-block-group.ca-faq__item > .ca-faq__respuesta {
+	margin-block-start: .6rem !important;
+}
+
+.ca-faq__respuesta {
+	margin: 0;
+	max-inline-size: 44rem;
+}
+
+/* — Otros servicios — */
+.ca-otros {
+	padding-block: clamp(2.5rem, 6vw, 4rem);
+	border-block-start: 1px solid var(--ca-linea);
+}
+
+.ca-otros__lista {
+	display: grid;
+	margin: 1.25rem 0 0 !important;
+	padding: 0;
+	list-style: none;
+}
+
+.ca-otros__lista > li {
+	margin: 0;
+	border-block-start: 1px solid var(--ca-regla);
+}
+
+.ca-otros__lista a {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 1.1rem 0;
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.1rem, 1rem + .6vw, 1.4rem);
+	font-weight: 800;
+	line-height: 1.2;
+	text-decoration: none !important;
+	color: inherit;
+}
+
+.ca-otros__lista a::after {
+	content: "→";
+	content: "→" / "";
+	color: var(--ca-acento);
+	transition: transform .25s var(--ca-ease);
+}
+
+.ca-otros__lista a:hover {
+	color: var(--ca-cobre-profundo);
+}
+
+.ca-otros__lista a:hover::after {
+	transform: translateX(5px);
+}
+
+@media (min-width: 782px) {
+	.ca-otros__lista {
+		grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+		column-gap: 2rem;
+	}
+}
+
+/* — Contacto: teléfono gigante — */
+.ca-telefono .ca-seccion__interior {
+	container-type: inline-size;
+}
+
+.ca-telefono .ca-seccion__interior > * + * {
+	margin-block-start: 1rem;
+}
+
+.ca-telefono__numero {
+	margin-block: .25rem 1.5rem !important;
+	font-family: var(--ca-rotulo);
+	font-size: clamp(2.2rem, 10vw, 9.5rem);
+	font-size: min(11.6cqi, 9.5rem);
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+	letter-spacing: -.03em;
+	white-space: nowrap;
+}
+
+.ca-telefono__numero a {
+	display: inline-block;
+	text-decoration: none !important;
+	color: var(--ca-petroleo);
+	background: linear-gradient(var(--ca-cobre), var(--ca-cobre)) left bottom / 100% .07em no-repeat;
+	padding-block-end: .06em;
+	transition: color .2s, background-size .4s var(--ca-ease);
+}
+
+.ca-telefono__numero a:hover {
+	color: var(--ca-cobre-profundo);
+	background-size: 100% .14em;
+}
+
+/* — Contacto: ubicación — */
+.ca-ubicacion__direccion {
+	font-size: clamp(1.2rem, 1rem + .9vw, 1.6rem);
+	line-height: 1.45;
+}
+
+.wp-block-group.ca-ubicacion__texto,
+.wp-block-group.ca-ubicacion__checklist {
+	display: grid;
+	gap: 1.15rem;
+}
+
+.wp-block-group.ca-ubicacion__texto > *,
+.wp-block-group.ca-ubicacion__checklist > * {
+	margin: 0;
+}
+
+.ca-ubicacion__subtitulo {
+	font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem);
+}
+
+
+/* 9. Pie y barra de llamada
+   ========================================================================== */
+
+.ca-footer {
+	position: relative;
+	padding-block: clamp(3.75rem, 8vw, 6rem) 1.5rem;
+}
+
+.ca-footer::before {
+	inset-block-start: 0;
+	rotate: 180deg;
+}
+
+.wp-block-group.ca-footer__grid {
+	display: grid;
+	gap: 2.5rem;
+}
+
+.wp-block-group.ca-footer__grid > *,
+.wp-block-group.ca-footer__marca > *,
+.wp-block-group.ca-footer__col > * {
+	margin: 0;
+}
+
+@media (min-width: 600px) {
+	.wp-block-group.ca-footer__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		column-gap: 2.5rem;
+	}
+}
+
+@media (min-width: 1100px) {
+	.wp-block-group.ca-footer__grid {
+		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, .8fr) minmax(0, 1.2fr);
+	}
+}
+
+.wp-block-group.ca-footer__marca {
+	display: grid;
+	gap: 1.25rem;
+	align-content: start;
+}
+
+.ca-footer .wp-block-site-logo img,
+.ca-footer .custom-logo {
+	inline-size: clamp(170px, 14vw + 80px, 220px);
+	block-size: auto;
+}
+
+.ca-footer__lema {
+	max-inline-size: 22rem;
+	font-size: var(--wp--preset--font-size--small);
+	color: var(--ca-texto-suave);
+}
+
+.wp-block-group.ca-footer__col {
+	display: grid;
+	gap: .9rem;
+	align-content: start;
+}
+
+.ca-footer__lista {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ca-footer__lista > li {
+	margin: 0 0 .55rem;
+}
+
+.ca-footer__lista a,
+.ca-footer__mapa a {
+	text-decoration-color: transparent !important;
+}
+
+.ca-footer__lista a:hover,
+.ca-footer__mapa a:hover {
+	text-decoration-color: var(--ca-cobre) !important;
+}
+
+.ca-footer__telefono {
+	font-family: var(--ca-rotulo);
+	font-size: clamp(1.45rem, 1.2rem + 1vw, 1.85rem);
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+	line-height: 1.1;
+}
+
+.ca-footer__telefono a {
+	text-decoration: none !important;
+}
+
+.ca-footer__direccion {
+	font-size: var(--wp--preset--font-size--small);
+	color: var(--ca-texto-suave);
+}
+
+.ca-footer__mapa {
+	font-size: var(--wp--preset--font-size--small);
+}
+
+.wp-block-group.ca-footer__legal {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: .5rem 2rem;
+	margin-block-start: clamp(2.5rem, 6vw, 4rem) !important;
+	padding-block-start: 1.25rem;
+	border-block-start: 1px solid var(--ca-regla);
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	letter-spacing: .03em;
+	color: var(--ca-texto-suave);
+}
+
+.wp-block-group.ca-footer__legal > * {
+	margin: 0;
+}
+
+/*
+ * Barra de llamada fija (solo móvil). Reserva su hueco al final del pie para
+ * no tapar contenido. En el editor se muestra en su sitio, sin fijar.
+ */
+.ca-callbar {
+	display: none !important;
+}
+
+@media (max-width: 781px) {
+	.editor-styles-wrapper .ca-callbar {
+		display: flex !important;
+		margin-block-start: 1.5rem;
+		padding: .75rem;
+		border: 1px dashed rgb(238 244 248 / .3);
+	}
+
+	body:not(.editor-styles-wrapper) .ca-callbar {
+		position: fixed;
+		z-index: 90;
+		inset-inline: 0;
+		inset-block-end: 0;
+		display: flex !important;
+		align-items: center;
+		gap: .75rem;
+		margin: 0 !important;
+		padding: .6rem clamp(1.125rem, 4.5vw, 2.5rem) calc(.6rem + env(safe-area-inset-bottom));
+		border-block-start: 2px solid var(--ca-cobre);
+		background: rgb(7 26 51 / .97);
+		box-shadow: 0 -12px 30px -12px rgb(0 0 0 / .5);
+	}
+
+	body:not(.editor-styles-wrapper) .ca-footer {
+		padding-block-end: calc(5.5rem + env(safe-area-inset-bottom));
+	}
+}
+
+.ca-callbar > * {
+	margin: 0 !important;
+}
+
+.ca-callbar__texto {
+	font-family: var(--ca-mono);
+	font-size: .75rem;
+	font-weight: 600;
+	letter-spacing: .1em;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--ca-cobre-claro);
+}
+
+.ca-callbar .wp-block-buttons {
+	flex: 1 1 auto;
+	justify-content: flex-end;
+}
+
+.ca-callbar .wp-block-button__link {
+	padding: .85em 1.1em;
+	font-size: 1rem;
+}
+
+@media (max-width: 379px) {
+	.ca-callbar__texto {
+		display: none;
+	}
+
+	.ca-callbar .wp-block-buttons,
+	.ca-callbar .wp-block-button,
+	.ca-callbar .wp-block-button__link {
+		inline-size: 100%;
+	}
+}
+
+
+/* 10. Blog y entradas
+   ========================================================================== */
+
+.ca-blog {
+	padding-block: clamp(2.5rem, 6vw, 5rem);
+}
+
+.ca-listado__items {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border-block-start: 2px solid currentColor;
+}
+
+.ca-listado__items > li {
+	margin: 0 !important;
+	border-block-end: 1px solid var(--ca-linea);
+}
+
+.wp-block-group.ca-articulo {
+	position: relative;
+	display: grid;
+	gap: .5rem 2rem;
+	padding-block: 1.6rem;
+	transition: background-color .25s;
+}
+
+.wp-block-group.ca-articulo > *,
+.wp-block-group.ca-articulo__cuerpo > * {
+	margin: 0;
+}
+
+.wp-block-group.ca-articulo__cuerpo {
+	display: grid;
+	gap: .6rem;
+}
+
+@media (min-width: 782px) {
+	.wp-block-group.ca-articulo {
+		grid-template-columns: 9rem minmax(0, 1fr) 13rem;
+		align-items: start;
+	}
+}
+
+.ca-articulo__fecha,
+.ca-relacionado .ca-articulo__fecha {
+	padding-block-start: .45em;
+	color: var(--ca-acento);
+}
+
+.ca-articulo__titulo {
+	font-size: clamp(1.35rem, 1rem + 1.4vw, 2rem);
+	line-height: 1.1;
+	letter-spacing: -.02em;
+}
+
+.ca-articulo__titulo a {
+	text-decoration: none !important;
+}
+
+.ca-articulo__titulo a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+.ca-articulo__extracto {
+	color: var(--ca-texto-suave);
+}
+
+.ca-articulo__imagen img {
+	border: 1px solid var(--ca-linea);
+}
+
+.wp-block-group.ca-articulo:hover {
+	background-color: rgb(238 244 248 / .7);
+}
+
+.wp-block-group.ca-articulo:hover .ca-articulo__titulo a {
+	color: var(--ca-cobre-profundo);
+}
+
+.ca-paginacion {
+	margin-block-start: 2rem !important;
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--small);
+}
+
+.ca-listado__vacio {
+	padding-block: 2rem;
+	font-size: var(--wp--preset--font-size--medium);
+}
+
+.wp-block-search.ca-buscador {
+	max-inline-size: 100%;
+}
+
+.ca-buscador .wp-block-search__input {
+	flex: 1 1 0;
+	inline-size: 0;
+	min-inline-size: 0;
+}
+
+.ca-buscador .wp-block-search__inside-wrapper {
+	box-sizing: border-box;
+	inline-size: 100% !important;
+	max-inline-size: 100%;
+	border: 2px solid var(--ca-grafito) !important;
+	border-radius: 2px;
+	background: var(--ca-blanco);
+}
+
+/* Entrada */
+.ca-entrada__cabecera {
+	padding-block: clamp(1.25rem, 3vw, 2rem) clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.wp-block-group.ca-entrada__cabecera-interior {
+	display: grid;
+	gap: 1rem;
+}
+
+.wp-block-group.ca-entrada__cabecera-interior > * {
+	margin: 0;
+}
+
+.ca-entrada__categoria {
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	font-weight: 600;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+}
+
+.ca-entrada__categoria a {
+	color: var(--ca-cobre-profundo);
+	text-decoration: none !important;
+}
+
+.ca-entrada__titulo {
+	max-inline-size: 24ch;
+	font-size: clamp(2.1rem, 1.2rem + 3.8vw, 4.4rem);
+	line-height: 1.02;
+	letter-spacing: -.03em;
+}
+
+.wp-block-group.ca-entrada__meta {
+	gap: .25rem 1.25rem;
+	font-family: var(--ca-mono);
+	font-size: var(--wp--preset--font-size--x-small);
+	letter-spacing: .05em;
+	text-transform: uppercase;
+	color: var(--ca-texto-suave);
+}
+
+.ca-entrada__autor::before {
+	content: "Por ";
+}
+
+.ca-entrada {
+	padding-block: clamp(2rem, 5vw, 4rem);
+}
+
+.ca-entrada__imagen img {
+	border: 1px solid var(--ca-linea);
+}
+
+.ca-entrada__etiquetas {
+	margin-block-start: 2.5rem !important;
+	font-size: var(--wp--preset--font-size--small);
+}
+
+.ca-relacionados .wp-block-post-template {
+	gap: 0 2rem;
+	margin-block-start: 1.5rem;
+}
+
+.wp-block-group.ca-relacionado {
+	position: relative;
+	display: grid;
+	gap: .5rem;
+	padding-block: 1.25rem;
+	border-block-start: 2px solid currentColor;
+}
+
+.wp-block-group.ca-relacionado > * {
+	margin: 0;
+}
+
+.ca-relacionado .ca-articulo__titulo {
+	font-size: clamp(1.15rem, 1rem + .6vw, 1.4rem);
+}
+
+
+/* 11. Movimiento
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
+
+	.wp-block-button.is-style-ca-placa .wp-block-button__link:hover::after {
+		transform: translateX(120%);
+		transition: transform .75s var(--ca-ease);
+	}
+
+	/*
+	 * Aparición al hacer scroll solo con CSS (scroll-driven animations).
+	 * Sin JavaScript: en navegadores sin soporte todo se ve directamente.
+	 * La portada y las introducciones nunca se animan (H1 y teléfono, inmediatos).
+	 */
+	@supports (animation-timeline: view()) {
+		body:not(.editor-styles-wrapper) :is(
+			.ca-seccion .ca-cabecera,
+			.ca-servicio,
+			.ca-faq__item,
+			.ca-ventaja,
+			.ca-ficha__fila,
+			.ca-problemas__lista > li,
+			.ca-situacion,
+			.ca-texto-imagen__figura,
+			.ca-placa,
+			.ca-cta-placa,
+			.ca-zonas__cp,
+			.ca-articulo,
+			.ca-centrado > *
+		) {
+			animation: ca-aparece linear both;
+			animation-timeline: view();
+			animation-range: entry 0% entry 55%;
+		}
+
+		/* Los pitones bajan hasta alinearse en la línea de corte. */
+		@media (min-width: 782px) {
+			body:not(.editor-styles-wrapper) .ca-pasos {
+				view-timeline: --ca-pasos block;
+			}
+
+			body:not(.editor-styles-wrapper) .ca-paso::after {
+				animation: ca-piton linear both;
+				animation-timeline: --ca-pasos;
+				animation-range: entry 35% cover 55%;
+			}
+
+			body:not(.editor-styles-wrapper) .ca-pasos::before {
+				animation: ca-linea-corte linear both;
+				animation-timeline: --ca-pasos;
+				animation-range: entry 35% cover 55%;
+			}
+		}
+
+		/* Barra de llamada: aparece al bajar, cuando el teléfono de la portada ya no se ve. */
+		@media (max-width: 781px) {
+			body:not(.editor-styles-wrapper) .ca-callbar {
+				animation: ca-callbar linear both;
+				animation-timeline: scroll(root block);
+				animation-range: 0 75vh;
+			}
+		}
+	}
+}
+
+@keyframes ca-aparece {
+	from {
+		opacity: 0;
+		translate: 0 1.75rem;
+	}
+	to {
+		opacity: 1;
+		translate: 0 0;
+	}
+}
+
+@keyframes ca-piton {
+	from {
+		transform: translateY(var(--ca-off, 0));
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+
+@keyframes ca-linea-corte {
+	0%,
+	90% {
+		opacity: .35;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes ca-callbar {
+	0%,
+	55% {
+		transform: translateY(110%);
+		visibility: hidden;
+	}
+	100% {
+		transform: translateY(0);
+		visibility: visible;
+	}
+}
+
+
+/* 12. Impresión
+   ========================================================================== */
+
+@media print {
+	.ca-callbar,
+	.ca-nav,
+	.ca-hero::before,
+	.ca-intro--servicio::before {
+		display: none !important;
+	}
+
+	.is-style-ca-corte,
+	.is-style-ca-corte-derecha {
+		margin-block-start: 0 !important;
+		clip-path: none;
+	}
+}

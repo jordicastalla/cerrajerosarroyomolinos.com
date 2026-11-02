@@ -1,0 +1,29 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cerrajeros-arroyomolinos/breadcrumbs",
+	"title": "Migas de pan",
+	"category": "theme",
+	"icon": "arrow-right-alt2",
+	"description": "Ruta de navegación de la página actual (Inicio › Sección › Página). No se muestra en la portada.",
+	"keywords": [ "breadcrumbs", "migas", "navegación" ],
+	"textdomain": "cerrajeros-arroyomolinos",
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"color": {
+			"text": true,
+			"link": true,
+			"background": false
+		},
+		"typography": {
+			"fontSize": true
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"editorScript": "file:./editor.js",
+	"render": "file:./render.php"
+}
