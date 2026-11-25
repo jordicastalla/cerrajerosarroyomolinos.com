@@ -54,7 +54,7 @@ unset( $ca_modules, $ca_module );
  * imprimen su propio <title> al principio de su bloque (antes de la meta
  * description); Yoast intenta quitar el del núcleo, pero lo hace antes de que
  * se añada. Para no tener dos, se quita el del núcleo cuando hay uno de los
- * dos plugins. Sin ellos no cambia nada: sigue saliendo el del núcleo.
+ * dos plugins; sin ellos, el del núcleo se imprime al principio del <head>.
  */
 add_action(
 	'after_setup_theme',
@@ -68,10 +68,15 @@ add_action(
 		if ( false === has_action( 'wp_head', '_block_template_render_title_tag' ) ) {
 			return;
 		}
+		remove_action( 'wp_head', '_block_template_render_title_tag', 1 );
+
+		// Rank Math y Yoast imprimen su propio <title> al principio de su bloque.
 		$rank_math = false !== has_action( 'rank_math/head', '_wp_render_title_tag' );
 		$yoast     = current_theme_supports( 'title-tag' ) && has_action( 'wpseo_head' );
-		if ( $rank_math || $yoast ) {
-			remove_action( 'wp_head', '_block_template_render_title_tag', 1 );
+		if ( ! $rank_math && ! $yoast ) {
+			// Sin ellos (o con plugins que solo filtran el texto, como The SEO
+			// Framework), el <title> del núcleo se imprime aquí, antes que el resto.
+			_block_template_render_title_tag();
 		}
 	},
 	0
