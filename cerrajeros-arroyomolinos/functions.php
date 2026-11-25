@@ -44,16 +44,17 @@ foreach ( $ca_modules as $ca_module ) {
 unset( $ca_modules, $ca_module );
 
 /* -------------------------------------------------------------------------
- * <title> al principio del bloque de Rank Math
+ * <title> al principio del bloque de Rank Math o Yoast SEO
  * ---------------------------------------------------------------------- */
 
 /*
- * En los temas de bloques, WordPress imprime el <title> con
- * _block_template_render_title_tag(), después del bloque de Rank Math.
- * Con title-tag declarado, Rank Math lo imprime él mismo al principio de su
- * bloque (rank_math/head, prioridad 1, antes de la meta description). Para
- * no tener dos, se quita el del núcleo solo cuando están enganchados ambos.
- * Sin Rank Math no cambia nada: sigue saliendo el <title> del núcleo.
+ * En los temas de bloques, WordPress añade su <title>
+ * (_block_template_render_title_tag) al elegir la plantilla, después de que
+ * los plugins registren sus hooks. Con title-tag declarado, Rank Math y Yoast
+ * imprimen su propio <title> al principio de su bloque (antes de la meta
+ * description); Yoast intenta quitar el del núcleo, pero lo hace antes de que
+ * se añada. Para no tener dos, se quita el del núcleo cuando hay uno de los
+ * dos plugins. Sin ellos no cambia nada: sigue saliendo el del núcleo.
  */
 add_action(
 	'after_setup_theme',
@@ -64,8 +65,12 @@ add_action(
 add_action(
 	'wp_head',
 	static function () {
-		if ( false !== has_action( 'wp_head', '_block_template_render_title_tag' )
-			&& false !== has_action( 'rank_math/head', '_wp_render_title_tag' ) ) {
+		if ( false === has_action( 'wp_head', '_block_template_render_title_tag' ) ) {
+			return;
+		}
+		$rank_math = false !== has_action( 'rank_math/head', '_wp_render_title_tag' );
+		$yoast     = current_theme_supports( 'title-tag' ) && has_action( 'wpseo_head' );
+		if ( $rank_math || $yoast ) {
 			remove_action( 'wp_head', '_block_template_render_title_tag', 1 );
 		}
 	},
